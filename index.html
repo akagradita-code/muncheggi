@@ -397,7 +397,7 @@ const DEFAULTS={
   width:1080,scale:2,split:'none',ratio:'4:5',count:4,preset:'long',longCount:1,prevMargin:null,pstyle:'gap05',vcenter:true
 };
 const NUMERIC=new Set(['size','lh','lsp','pgapL','indent','paperOpacity','margin','pad','noise','bgOpacity','avatarSize','sigSize','sigOpacity','width','scale','count','longCount']);
-const SAMPLE='도윤: 차무경, 너 나랑 결혼할 거야, 말 거야? 똑바로 말해.\n\n무경: ...시끄러워';
+const SAMPLE='무경: 제법 멀리 와 버렸지. 대책도 없지.\n\n도윤: 끝이 중요한 게 아니야, 이건 나의 Destiny';
 const SAMPLE_SOLID_DOYUN='#8E78B8';
 const SAMPLE_SOLID_MUGYUNG='#8D939B';
 
@@ -419,7 +419,9 @@ if(!Array.isArray(S.speakers))S.speakers=[];
   const sampleA=S.speakers.find(x=>x&&x.id==='sample-a');
   const sampleB=S.speakers.find(x=>x&&x.id==='sample-b');
   const legacyNames=['서윤','민재'];
-  const isOldSample = sampleA || sampleB || S.speakers.some(x=>x&&legacyNames.includes(x.name));
+  const oldSamplePhrases=['오늘은 이상하게 조용하네.','그럼 커피 한 잔만 마시고 갈래?'];
+  const isOldSampleText = typeof TEXT==='string' && oldSamplePhrases.some(v=>TEXT.includes(v));
+  const isOldSample = isOldSampleText || sampleA || sampleB || S.speakers.some(x=>x&&legacyNames.includes(x.name));
   if(isOldSample){
     const others=S.speakers.filter(x=>x&&x.id!=='sample-a'&&x.id!=='sample-b'&&!legacyNames.includes(x.name));
     S.speakers=[
@@ -438,11 +440,13 @@ if(!Array.isArray(S.speakers))S.speakers=[];
 // 기존 샘플 문구가 남아 있는 경우에만 새 예시로 교체한다. 사용자가 쓴 본문은 건드리지 않는다.
 const LEGACY_SAMPLE_TEXTS=new Set([
   '서윤: 오늘 비가 올 것 같아.\n\n민재: 우산 가져왔어.\n\n서윤: 역시 너답네.',
+  '도윤: 오늘은 이상하게 조용하네.\n\n무경: 그러게. 비가 오려나 봐.\n\n도윤: 그럼 커피 한 잔만 마시고 갈래?',
+  '이름을 바꾸거나 이 문장을 지우고, 원하는 글을 붙여넣어 보세요.\n\n도윤: 오늘은 이상하게 조용하네.\n\n무경: 그러게. 비가 오려나 봐.\n\n도윤: 그럼 커피 한 잔만 마시고 갈래?',
   '도윤: 차무경 너 나랑 결혼할 거야 말 거야 똑바로 말해\n\n무경: ...시끄러워',
   '도윤: 차무경 너 나랑 결혼할 거야 말 거야? 똑바로 말해\n\n무경: ...시끄러워',
   '도윤: 차무경, 너 나랑 결혼할 거야, 말 거야? 똑바로 말해.\n\n무경: ...시끄러워'
 ]);
-if(LEGACY_SAMPLE_TEXTS.has(TEXT))TEXT=SAMPLE;
+if(LEGACY_SAMPLE_TEXTS.has(TEXT)){ TEXT=SAMPLE; try{ const raw=localStorage.getItem(KEY); const o=raw?JSON.parse(raw):{}; o.text=SAMPLE; o.settings=Object.assign({},o.settings||{}, {speakers:clone(S.speakers)}); localStorage.setItem(KEY,JSON.stringify(o)); }catch(e){} }
 
 const snap=(v,arr)=>arr.reduce((a,b)=>Math.abs(b-v)<Math.abs(a-v)?b:a);S.margin=snap(S.margin,[0,24,40,70]);S.pad=snap(S.pad,[56,80,120,160]);if(!['gap05','gap1','indent'].includes(S.pstyle))S.pstyle='gap05';if(S.lsp>0)S.lsp=0;delete S.wrap;
 
@@ -537,21 +541,21 @@ function computeLayout(){
   for(const p of paras){
     if(scriptMode&&p.length&&/^\s*(S#|#\s?\d|씬\s?\d|INT\.|EXT\.)/i.test(p[0].map(g=>g.g).join('')))p.forEach(l=>l.forEach(g=>{g.b=true;}));
     const sp=detectSpeaker(p);
-    const hasImg=!!(sp&&sp.img&&IM.get(sp.img));
+    const hasAvatar=!!(sp&&((sp.img&&IM.get(sp.img))||sp.solid));
     const same=!!(sp&&prevName!==null&&sp.name.trim()===prevName);prevName=sp?sp.name.trim():null;
-    const showImg=hasImg&&!same;let avOff=0;
+    const showAvatar=hasAvatar&&!same;let avOff=0;
     let textX=0,minH=0;const items=[];
-    const left=!!(sp&&!scriptMode&&S.avatarPos==='left'&&hasImg);
-    const top=!!(sp&&!scriptMode&&S.avatarPos==='top'&&hasImg);
+    const left=!!(sp&&!scriptMode&&S.avatarPos==='left'&&showAvatar);
+    const top=!!(sp&&!scriptMode&&S.avatarPos==='top'&&showAvatar);
     let side=0;
     if(sp&&scriptMode){
       side=Math.round(contentW*0.14);textX=side;
-      items.push({type:'name',h:Math.max(fs*1.7,iA+fs*0.5),x:0,name:sp.name.trim(),center:true,nfs:fs,sp:showImg?sp:null,iA});
+      items.push({type:'name',h:Math.max(fs*1.7,iA+fs*0.5),x:0,name:sp.name.trim(),center:true,nfs:fs,sp:showAvatar?sp:null,iA});
     }else if(sp){
       if(left){
         textX=A+Math.round(A*0.4);
-        if(showImg){avOff=(lineH-A)/2;minH=Math.max(0,avOff+A);}
-      }else if(top&&showImg){
+        if(showAvatar){avOff=(lineH-A)/2;minH=Math.max(0,avOff+A);}
+      }else if(top&&showAvatar){
         items.push({type:'head',h:A+fs*0.6,row:A,sp,hasImg,name:sp.name.trim(),A});
       }
     }
@@ -567,7 +571,7 @@ function computeLayout(){
         items.push({type:'line',h:lineH,x:textX+ln.indent,glyphs:ln.glyphs,w:ln.w,avail:avail-ln.indent,al:fg&&fg.al?fg.al:null,last:!!ln.last,soft});
       }
     });
-    blocks.push({items,sp,minH,avatarLeft:!!(left&&showImg),avOff,A});
+    blocks.push({items,sp,minH,avatarLeft:!!(left&&showAvatar),avOff,A});
   }
   const pn=S.pageNum&&!!E.print;const sigOn=!!S.sig.trim()||pn;
   const SG=Math.round(fs*0.62);const sigExtra=sigOn?Math.max(0,Math.max(P/2,SG)+1.5*SG-P):0;
@@ -898,6 +902,9 @@ function renderSpeakers(){
   S.speakers.forEach(sp=>{
     const r=document.createElement('div');r.className='spk';
     const av=document.createElement('div');av.className='av';
+    if(S.avatarShape==='circle')av.style.borderRadius='50%';
+    else if(S.avatarShape==='round')av.style.borderRadius='22%';
+    else av.style.borderRadius='0';
     if(sp.img)av.style.backgroundImage='url("'+sp.img+'")';
     else if(sp.solid)av.style.background=sp.solid;
     const nm=document.createElement('input');nm.type='text';nm.value=sp.name;nm.placeholder='이름';nm.setAttribute('aria-label','말하는 사람 이름');
