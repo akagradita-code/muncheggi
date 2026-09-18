@@ -4,7 +4,22 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#D6D1DF">
-<title>뮨췌기</title>
+<title>뮨췌기 | 줄글 발췌 이미지 만들기</title>
+<meta name="description" content="붙여넣기만 하면 소설·로그 발췌를 예쁜 줄글 이미지로. 트위터용 이미지와 A5·B6 PDF까지.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%238C83A3'/%3E%3Cstop offset='1' stop-color='%235B5470'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='64' height='64' rx='18' fill='url(%23g)'/%3E%3Ctext x='32' y='43' font-size='34' text-anchor='middle' fill='white' font-family='serif' font-weight='700'%3E%EB%AE%A8%3C/text%3E%3C/svg%3E">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="뮨췌기">
+<meta property="og:title" content="뮨췌기 | 줄글 발췌 이미지 만들기">
+<meta property="og:description" content="붙여넣기만 하면 소설·로그 발췌를 예쁜 줄글 이미지로. 트위터용 이미지와 A5·B6 PDF까지.">
+<meta property="og:url" content="https://akagradita-code.github.io/muncheggi/">
+<meta property="og:image" content="https://akagradita-code.github.io/muncheggi/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="뮨췌기 소개 이미지">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="뮨췌기 | 줄글 발췌 이미지 만들기">
+<meta name="twitter:description" content="붙여넣기만 하면 소설·로그 발췌를 예쁜 줄글 이미지로.">
+<meta name="twitter:image" content="https://akagradita-code.github.io/muncheggi/og.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;700&family=Nanum+Myeongjo:wght@400;700&family=Gowun+Batang:wght@400;700&family=Hahmlet:wght@400;700&display=swap">
@@ -228,6 +243,31 @@ details.more[open]>summary::after{content:" ▴"}
 .set{height:650px;min-height:650px;overflow:hidden}
 .set .panel{height:calc(650px - 72px);overflow-y:auto;align-content:start}
 @media (max-width:919px){.edit{height:420px;min-height:420px}.set{height:650px;min-height:650px}.set .panel{height:calc(650px - 72px)}}
+/* ===== tidy (v-next) ===== */
+.spk{display:grid;grid-template-columns:44px minmax(0,1fr) auto;gap:10px;align-items:center;padding:8px 8px 8px 10px;border:1px solid var(--line);border-radius:14px;background:var(--solid)}
+.spk .av{grid-row:auto;width:44px;height:44px;min-height:0;padding:0;border:1px solid var(--line);background:var(--well) center/cover no-repeat;position:relative;cursor:pointer}
+.spk .av::after{content:"+";position:absolute;right:-3px;bottom:-3px;width:18px;height:18px;border-radius:50%;background:var(--accent);color:#fff;font-size:13px;line-height:18px;text-align:center;box-shadow:0 0 0 2px #fff}
+.spk input[type=text]{height:40px;border-radius:10px}
+.spk-tools{display:flex;gap:6px;align-items:center}
+.spk .solid-picker{width:32px;height:32px;min-height:0;padding:0;border-radius:50%;border:1px solid var(--line)}
+.spk .delete-spk{width:32px;height:32px;min-height:0;padding:0;border-radius:50%;border:0;background:var(--well);color:var(--soft);font-size:13px;display:inline-flex;align-items:center;justify-content:center}
+.spk .delete-spk:hover{color:var(--ink)}
+.acts{justify-content:center;gap:10px}
+.acts button:first-of-type{margin-left:0}
+.acts .num{margin-right:0}
+.acts .lbl{display:inline}
+.acts button{height:30px;padding:0 12px 0 10px;gap:5px}
+.fill>.btn:only-child,#bgPick:has(+ #bgClear.hidden){grid-column:1/-1}
+@media (max-width:919px){
+  .edit,.set{height:auto;min-height:0}
+  .set .panel{height:auto;overflow:visible}
+  .edit .card-b{display:grid}
+  #text{min-height:200px;height:auto}
+  #pages{height:auto;padding:18px 0 22px}
+  .handle{margin-top:-8px}
+  .page{height:auto;justify-content:flex-start}
+  .page canvas{max-height:34vh;max-width:calc(100vw - 56px)}
+}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
@@ -254,6 +294,7 @@ details.more[open]>summary::after{content:" ▴"}
         <button class="tb b" data-fmt="b" aria-label="굵게" title="굵게 (Ctrl/Cmd+B)">B</button>
         <button class="tb i" data-fmt="i" aria-label="기울임" title="기울임 (Ctrl/Cmd+I)">I</button>
         <button class="tb s" data-fmt="s" aria-label="취소선" title="취소선 (Ctrl/Cmd+Shift+X)">S</button>
+        <button class="tb" data-fmt="x" aria-label="서식 지우기" title="서식 지우기"><svg viewBox="0 0 16 16"><path d="M9.5 3.2l3.3 3.3-5.6 5.6H4.6L2.9 10.4a1 1 0 0 1 0-1.4z"/><path d="M6.4 6.3l3.3 3.3M8 12.1h5.5"/></svg></button>
       </div>
       <div class="group" role="group" aria-label="정렬">
         <button class="tb" data-al="left" aria-label="왼쪽 정렬" title="왼쪽"><svg viewBox="0 0 16 16"><path d="M2 3.5h12M2 6.5h8M2 9.5h12M2 12.5h8"/></svg></button>
@@ -288,7 +329,7 @@ details.more[open]>summary::after{content:" ▴"}
 
   <div class="panel hidden" data-panel="theme" id="panel-theme" aria-labelledby="tab-theme" role="tabpanel" tabindex="0">
     <div class="themes" id="themeGrid"></div>
-    <p class="note theme-reset-note">※ 테마를 선택하면 현재 적용된 설정이 해당 테마의 기본 설정으로 초기화됩니다.</p>
+    <p class="note theme-reset-note">테마를 고르면 글자·종이 설정이 바뀌어요. 바로 되돌릴 수 있어요.</p>
     <div class="divider"></div>
     <div class="sub">내 프리셋</div>
     <p class="note">글 빼고 모든 설정을 이 브라우저에 저장해요.</p>
@@ -331,14 +372,13 @@ details.more[open]>summary::after{content:" ▴"}
   </div>
 
   <div class="panel hidden" data-panel="people" id="panel-people" aria-labelledby="tab-people" role="tabpanel" tabindex="0">
-    <p class="note">문단을 <code>이름:</code>으로 시작하면 말하는 사람 표시가 붙어요. 프로필 이미지를 등록해 사용할 수 있어요.</p>
+    <p class="note">문단을 <code>이름:</code>으로 시작하면 표시가 붙어요. 동그라미를 누르면 이미지를, 색 점을 누르면 단색을 고를 수 있어요.</p>
     <div id="spkList" style="display:grid;gap:10px"></div>
     <div class="fill"><button class="btn" id="spkAdd" type="button" aria-label="말하는 사람 한 명 추가">＋ 사람 추가</button></div>
     <input type="file" id="spkOne" accept="image/*" class="hidden">
     <div class="row two"><span class="lab">위치</span><div class="seg" data-seg="avatarPos"></div></div>
     <div class="row two"><span class="lab">모양</span><div class="seg" data-seg="avatarShape"></div></div>
     <div class="row two"><span class="lab">크기</span><div class="seg" data-seg="avatarScale"></div></div>
-    <div class="divider"></div>
   </div>
 
   <div class="panel hidden" data-panel="sign" id="panel-sign" aria-labelledby="tab-sign" role="tabpanel" tabindex="0">
@@ -397,15 +437,16 @@ const DEFAULTS={
   width:1080,scale:2,split:'none',ratio:'4:5',count:4,preset:'long',longCount:1,prevMargin:null,pstyle:'gap05',vcenter:true
 };
 const NUMERIC=new Set(['size','lh','lsp','pgapL','indent','paperOpacity','margin','pad','noise','bgOpacity','avatarSize','sigSize','sigOpacity','width','scale','count','longCount']);
-const SAMPLE='이름을 바꾸거나 이 문장을 지우고, 원하는 글을 붙여넣어 보세요\n\n무경: 제법 멀리 와 버렸지. 대책도 없지.\n\n도윤: 끝이 중요한 게 아니야, 이건 나의 Destiny';
+const SAMPLE='이름을 바꾸거나 이 문장을 지우고, 원하는 글을 붙여넣어 보세요.\n\n도윤: 차무경, 너 나랑 결혼할 거야, 말 거야? 똑바로 말해.\n\n무경: ...시끄러워';
 const SAMPLE_SOLID_DOYUN='#8E78B8';
 const SAMPLE_SOLID_MUGYUNG='#8D939B';
 
 const clone=o=>JSON.parse(JSON.stringify(o));
+let FIRST_VISIT=true;
 let S=clone(DEFAULTS), TEXT=SAMPLE;
 try{
   const raw=localStorage.getItem(KEY);
-  if(raw){
+  if(raw){FIRST_VISIT=false;
     const o=JSON.parse(raw);
     S=Object.assign(clone(DEFAULTS),o.settings||{});
     if(typeof o.text==='string')TEXT=o.text;
@@ -413,40 +454,15 @@ try{
 }catch(e){}
 if(!['4:5','2:3','9:16','3:2'].includes(S.ratio))S.ratio='4:5';
 
-// 기본 샘플 인물은 항상 무경 → 도윤 순서와 단색 프로필로 시작한다.
+// 처음 방문했거나, 샘플 글 그대로인데 인물이 비어 있으면 예시 인물(무경, 도윤)을 넣는다.
 if(!Array.isArray(S.speakers))S.speakers=[];
-{
-  const sampleA=S.speakers.find(x=>x&&x.id==='sample-a');
-  const sampleB=S.speakers.find(x=>x&&x.id==='sample-b');
-  const legacyNames=['서윤','민재'];
-  const oldSamplePhrases=['오늘은 이상하게 조용하네.','그럼 커피 한 잔만 마시고 갈래?'];
-  const isOldSampleText = typeof TEXT==='string' && oldSamplePhrases.some(v=>TEXT.includes(v));
-  const isOldSample = isOldSampleText || sampleA || sampleB || S.speakers.some(x=>x&&legacyNames.includes(x.name));
-  if(isOldSample){
-    const others=S.speakers.filter(x=>x&&x.id!=='sample-a'&&x.id!=='sample-b'&&!legacyNames.includes(x.name));
-    S.speakers=[
-      {id:'sample-b',name:'무경',img:null,solid:SAMPLE_SOLID_MUGYUNG},
-      {id:'sample-a',name:'도윤',img:null,solid:SAMPLE_SOLID_DOYUN},
-      ...others
-    ];
-  }else if(!S.speakers.length){
-    S.speakers=[
-      {id:'sample-b',name:'무경',img:null,solid:SAMPLE_SOLID_MUGYUNG},
-      {id:'sample-a',name:'도윤',img:null,solid:SAMPLE_SOLID_DOYUN}
-    ];
-  }
+if(FIRST_VISIT||(!S.speakers.length&&TEXT===SAMPLE)){
+  S.speakers=[
+    {id:'sample-b',name:'무경',img:null,solid:SAMPLE_SOLID_MUGYUNG},
+    {id:'sample-a',name:'도윤',img:null,solid:SAMPLE_SOLID_DOYUN}
+  ];
 }
 
-// 기존 샘플 문구가 남아 있는 경우에만 새 예시로 교체한다. 사용자가 쓴 본문은 건드리지 않는다.
-const LEGACY_SAMPLE_TEXTS=new Set([
-  '서윤: 오늘 비가 올 것 같아.\n\n민재: 우산 가져왔어.\n\n서윤: 역시 너답네.',
-  '도윤: 오늘은 이상하게 조용하네.\n\n무경: 그러게. 비가 오려나 봐.\n\n도윤: 그럼 커피 한 잔만 마시고 갈래?',
-  '이름을 바꾸거나 이 문장을 지우고, 원하는 글을 붙여넣어 보세요.\n\n도윤: 오늘은 이상하게 조용하네.\n\n무경: 그러게. 비가 오려나 봐.\n\n도윤: 그럼 커피 한 잔만 마시고 갈래?',
-  '도윤: 차무경 너 나랑 결혼할 거야 말 거야 똑바로 말해\n\n무경: ...시끄러워',
-  '도윤: 차무경 너 나랑 결혼할 거야 말 거야? 똑바로 말해\n\n무경: ...시끄러워',
-  '도윤: 차무경, 너 나랑 결혼할 거야, 말 거야? 똑바로 말해.\n\n무경: ...시끄러워'
-]);
-if(LEGACY_SAMPLE_TEXTS.has(TEXT)){ TEXT=SAMPLE; try{ const raw=localStorage.getItem(KEY); const o=raw?JSON.parse(raw):{}; o.text=SAMPLE; o.settings=Object.assign({},o.settings||{}, {speakers:clone(S.speakers)}); localStorage.setItem(KEY,JSON.stringify(o)); }catch(e){} }
 
 const snap=(v,arr)=>arr.reduce((a,b)=>Math.abs(b-v)<Math.abs(a-v)?b:a);S.margin=snap(S.margin,[0,24,40,70]);S.pad=snap(S.pad,[56,80,120,160]);if(!['gap05','gap1','indent'].includes(S.pstyle))S.pstyle='gap05';if(S.lsp>0)S.lsp=0;delete S.wrap;
 
@@ -699,8 +715,8 @@ async function render(){
     c.setAttribute('role','img');c.setAttribute('aria-label','미리보기 '+(i+1)+'쪽');
     const card=document.createElement('div');card.className='page';card.appendChild(c);
     const acts=document.createElement('div');acts.className='acts';
-    acts.innerHTML=(n>1?'<span class="num">'+(i+1)+' / '+n+'</span>':'')+'<button data-copy="'+i+'" aria-label="'+(i+1)+'쪽 복사" title="복사"><svg viewBox="0 0 24 24"><rect x="9" y="9" width="11" height="11" rx="2.5"/><path d="M5 15V6.5A2.5 2.5 0 0 1 7.5 4H15"/></svg><span class="lbl">복사</span></button><button data-save="'+i+'" aria-label="'+(i+1)+'쪽 저장" title="저장"><svg viewBox="0 0 24 24"><path d="M12 4v11M7 10.5l5 5 5-5M5 20h14"/></svg><span class="lbl">저장</span></button>';
-    card.appendChild(acts);frag.appendChild(card);
+    acts.innerHTML=n>1?'<span class="num">'+(i+1)+' / '+n+'</span>':'';
+    if(n>1)card.appendChild(acts);frag.appendChild(card);
   });
   host.replaceChildren(frag);
   const ex=safeScale(L.W,L.pageH,exportScale(L));
@@ -786,6 +802,10 @@ $('#saveAll').addEventListener('click',()=>{if(!LAST)return;if(LAST.E.print)save
 
 /* ---------- editor ---------- */
 const ta=$('#text');
+const mqM=window.matchMedia('(max-width:919px)');
+function grow(){if(mqM.matches){ta.style.height='auto';ta.style.height=Math.max(200,ta.scrollHeight+2)+'px';}else ta.style.height='';}
+ta.addEventListener('input',grow);window.addEventListener('resize',grow);setTimeout(grow,0);
+
 ta.value=TEXT;
 const mq=window.matchMedia('(max-width:919px)');
 ta.addEventListener('input',()=>{TEXT=ta.value;schedule();});
@@ -794,6 +814,7 @@ function replaceRange(s,e,str){ta.focus();ta.setSelectionRange(s,e);let ok=false
 ta.addEventListener('paste',e=>{const t=e.clipboardData&&e.clipboardData.getData('text/plain');if(t==null||t==='')return;e.preventDefault();replaceRange(ta.selectionStart,ta.selectionEnd,cleanText(t));});
 function applyFormat(t){
   const s=ta.selectionStart,e=ta.selectionEnd;if(s===e){toast('먼저 적용할 부분을 드래그해 주세요');return;}
+  if(t==='x'){const v0=ta.value,sel0=v0.slice(s,e),clean=sel0.replace(/\[\/?(b|i|s|left|center|right|justify)\]/gi,'');if(clean===sel0){toast('지울 서식이 없어요');return;}replaceRange(s,e,clean);ta.setSelectionRange(s,s+clean.length);return;}
   const v=ta.value,sel=v.slice(s,e),o='['+t+']',c='[/'+t+']';let rs=s,re_=e,rep;
   if(sel.startsWith(o)&&sel.endsWith(c)&&sel.length>=o.length+c.length)rep=sel.slice(o.length,sel.length-c.length);
   else if(v.slice(s-o.length,s)===o&&v.slice(e,e+c.length)===c){rs=s-o.length;re_=e+c.length;rep=sel;}
@@ -862,7 +883,7 @@ const SEGS={
   pad:[[56,'좁게'],[80,'보통'],[120,'넓게'],[160,'아주 넓게']]
 };
 const SEGSUB={size:v=>ptStr(v),lh:v=>Math.round(v*100)+'%',lsp:v=>(v>0?'+':'')+v+'%'};
-function fontSample(){return '무윤을 줄여서 뮨췌기';}
+function fontSample(){return '예시 문장입니다';}
 function refreshFontSamples(){const t=fontSample();document.querySelectorAll('[data-seg=font] .fx').forEach(e=>{e.textContent=t;});}
 function syncSegs(){
   document.querySelectorAll('[data-seg]').forEach(box=>{
@@ -901,7 +922,7 @@ function renderSpeakers(){
   const box=$('#spkList');box.innerHTML='';
   S.speakers.forEach(sp=>{
     const r=document.createElement('div');r.className='spk';
-    const av=document.createElement('div');av.className='av';
+    const av=document.createElement('button');av.type='button';av.className='av';av.title='눌러서 이미지 넣기';av.setAttribute('aria-label',(sp.name||'말하는 사람')+' 이미지 넣기');av.addEventListener('click',()=>{editing=sp.id;$('#spkOne').click();});
     if(S.avatarShape==='circle')av.style.borderRadius='50%';
     else if(S.avatarShape==='round')av.style.borderRadius='22%';
     else av.style.borderRadius='0';
@@ -911,8 +932,9 @@ function renderSpeakers(){
     nm.addEventListener('input',()=>{sp.name=nm.value;schedule();});
     const ch=document.createElement('button');ch.className='change-img';ch.type='button';ch.textContent=sp.img?'이미지 변경':'이미지 넣기';ch.title=sp.img?'프로필 이미지 변경':'프로필 이미지 넣기';ch.setAttribute('aria-label',sp.img?'프로필 이미지 변경':'프로필 이미지 넣기');ch.addEventListener('click',()=>{editing=sp.id;$('#spkOne').click();});
     const color=document.createElement('input');color.type='color';color.className='solid-picker';color.value=/^#[0-9a-fA-F]{6}$/.test(sp.solid||'')?sp.solid:'#D9DEE5';color.title='프로필 단색 선택';color.setAttribute('aria-label','프로필 단색 선택');color.addEventListener('input',()=>{sp.solid=color.value;sp.img=null;renderSpeakers();schedule();});
-    const del=document.createElement('button');del.className='delete-spk';del.type='button';del.textContent='삭제';del.setAttribute('aria-label',sp.name?sp.name+' 삭제':'말하는 사람 삭제');del.addEventListener('click',()=>{S.speakers=S.speakers.filter(x=>x.id!==sp.id);renderSpeakers();schedule();});
-    r.append(av,nm,ch,color,del);box.appendChild(r);
+    const del=document.createElement('button');del.className='delete-spk';del.type='button';del.textContent='✕';del.setAttribute('aria-label',sp.name?sp.name+' 삭제':'말하는 사람 삭제');del.addEventListener('click',()=>{const idx=S.speakers.findIndex(x=>x.id===sp.id);const gone=S.speakers[idx];S.speakers=S.speakers.filter(x=>x.id!==sp.id);renderSpeakers();schedule();toast((gone.name||'이름 없는 사람')+' 삭제했어요',{label:'되돌리기',fn:()=>{S.speakers.splice(idx,0,gone);renderSpeakers();schedule();}});});
+    const tools=document.createElement('div');tools.className='spk-tools';tools.append(color,del);
+    r.append(av,nm,tools);box.appendChild(r);
   });
 }
 $('#spkAdd').addEventListener('click',()=>{S.speakers.push({id:uid(),name:'',img:null,solid:'#D9DEE5'});renderSpeakers();schedule();});
